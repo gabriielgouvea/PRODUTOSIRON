@@ -36,6 +36,3 @@ venv.bak/
 
 # VS Code folder
 .vscode/
-
-# Outros
-*.sqlite3

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ title }} - Catálogo</title>
+</head>
+<body>
+    <header>
+        <h1>Painel de Cadastro</h1>
+        <nav>
+            <a href="{{ url_for('index') }}">Voltar para o Catálogo</a>
+        </nav>
+    </header>
+
+    <hr>
+
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <ul>
+            {% for message in messages %}
+                <li style="color: green;">{{ message }}</li>
+            {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
+
+    <main>
+        <section>
+            <h2>Cadastrar Nova Marca</h2>
+            <form method="POST" action="">
+                {{ marca_form.hidden_tag() }}
+                <p>
+                    {{ marca_form.nome.label }}<br>
+                    {{ marca_form.nome(size=32) }}
+                </p>
+                <p><input type="submit" name="submit_marca" value="Cadastrar Marca"></p>
+            </form>
+        </section>
+
+        <hr>
+
+        <section>
+            <h2>Cadastrar Nova Categoria</h2>
+            <form method="POST" action="">
+                {{ categoria_form.hidden_tag() }}
+                <p>
+                    {{ categoria_form.nome.label }}<br>
+                    {{ categoria_form.nome(size=32) }}
+                </p>
+                <p><input type="submit" name="submit_categoria" value="Cadastrar Categoria"></p>
+            </form>
+        </section>
+        
+        <hr>
+
+        <section>
+            <h2>Cadastrar Novo Produto</h2>
+            <form method="POST" action="">
+                {{ produto_form.hidden_tag() }}
+                <p>
+                    {{ produto_form.codigo.label }}<br>
+                    {{ produto_form.codigo(size=32) }}
+                </p>
+                <p>
+                    {{ produto_form.nome.label }}<br>
+                    {{ produto_form.nome(size=64) }}
+                </p>
+                <p>
+                    {{ produto_form.imagem_url.label }} (Opcional)<br>
+                    {{ produto_form.imagem_url(size=64) }}
+                </p>
+                <p>
+                    {{ produto_form.marca.label }}<br>
+                    {{ produto_form.marca() }}
+                </p>
+                <p>
+                    {{ produto_form.categoria.label }}<br>
+                    {{ produto_form.categoria() }}
+                </p>
+                <p><input type="submit" name="submit_produto" value="Cadastrar Produto"></p>
+            </form>
+        </section>
+    </main>
+</body>
+</html>

@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ title }} - Catálogo</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header>
+        <h1>Catálogo de Produtos da Academia</h1>
+        <nav>
+            <a href="{{ url_for('cadastro') }}">Ir para o Painel de Cadastro</a>
+        </nav>
+    </header>
+
+    <form method="GET" action="{{ url_for('index') }}" class="area-filtros">
+        <div class="filtro-grupo">
+            <label for="marca-input">Filtrar por Marca</label>
+            <input class="filtro-select" list="marcas-list" id="marca-input" name="marca_nome" placeholder="Digite ou selecione uma marca" value="{{ selected_marca or '' }}">
+            <datalist id="marcas-list">
+                {% for marca in marcas %}
+                    <option value="{{ marca.nome }}">
+                {% endfor %}
+            </datalist>
+        </div>
+
+        <div class="filtro-grupo">
+            <label for="categoria-input">Filtrar por Categoria</label>
+            <input class="filtro-select" list="categorias-list" id="categoria-input" name="categoria_nome" placeholder="Digite ou selecione uma categoria" value="{{ selected_categoria or '' }}">
+            <datalist id="categorias-list">
+                {% for categoria in categorias %}
+                    <option value="{{ categoria.nome }}">
+                {% endfor %}
+            </datalist>
+        </div>
+
+        <div class="filtro-grupo">
+            <label>&nbsp;</label>
+            <button type="submit" class="filtro-btn">Buscar</button>
+        </div>
+        
+        <div class="filtro-grupo">
+            <label>&nbsp;</label>
+            <a href="{{ url_for('index') }}" class="filtro-btn clear-btn">Limpar</a>
+        </div>
+    </form>
+
+    <div class="area-pesquisa">
+        <input type="text" id="pesquisa-nome" onkeyup="filtrarPorNome()" placeholder="Pesquisar pelo nome do produto nos resultados...">
+        <span id="contador-resultados"></span>
+    </div>
+    
+    <main class="catalogo-grid">
+        {% if produtos %}
+            {% for produto in produtos %}
+            <div class="produto-card">
+                <img src="{{ produto.imagem_url or 'https://via.placeholder.com/200' }}" alt="Imagem de {{ produto.nome }}">
+                <h2 class="produto-nome">{{ produto.nome }}</h2>
+                <button class="copy-btn" onclick="copiarCodigo('{{ produto.codigo }}', this)">
+                    Copiar Código ({{ produto.codigo }})
+                </button>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="mensagem-vazio">
+                {% if request.args %}
+                    <p>Nenhum produto encontrado com os filtros selecionados.</p>
+                {% else %}
+                    <p>Use os filtros acima para iniciar uma busca.</p>
+                {% endif %}
+            </div>
+        {% endif %}
+    </main>
+
+    <script>
+        function copiarCodigo(codigo, element) {
+            navigator.clipboard.writeText(codigo).then(() => {
+                const originalText = element.innerHTML;
+                element.innerHTML = 'Copiado!';
+                setTimeout(() => {
+                    element.innerHTML = originalText;
+                }, 1500);
+            });
+        }
+
+        // Nova função para filtrar os cards pelo nome
+        function filtrarPorNome() {
+            const input = document.getElementById('pesquisa-nome');
+            const filtro = input.value.toLowerCase();
+            const grid = document.querySelector('.catalogo-grid');
+            const cards = grid.getElementsByClassName('produto-card');
+            let count = 0;
+
+            for (let i = 0; i < cards.length; i++) {
+                const nomeProduto = cards[i].querySelector('.produto-nome').innerText;
+                if (nomeProduto.toLowerCase().includes(filtro)) {
+                    cards[i].style.display = "";
+                    count++;
+                } else {
+                    cards[i].style.display = "none";
+                }
+            }
+            
+            // Atualiza o contador de resultados
+            const contador = document.getElementById('contador-resultados');
+            if(filtro) { // Só mostra o contador se houver texto na busca
+                contador.innerText = `${count} resultado(s) encontrado(s)`;
+            } else {
+                contador.innerText = "";
+            }
+        }
+    </script>
+
+</body>
+</html>
