@@ -3,6 +3,12 @@ from flask_wtf.file import FileField, FileRequired, FileAllowed
 from wtforms import StringField, SubmitField, SelectField, PasswordField
 from wtforms.validators import DataRequired
 
+# --- NOVO FORMULÁRIO DE LOGIN ---
+class LoginForm(FlaskForm):
+    username = StringField('Usuário', validators=[DataRequired()])
+    password = PasswordField('Senha', validators=[DataRequired()])
+    submit = SubmitField('Entrar')
+
 class ProdutoForm(FlaskForm):
     codigo = StringField('Código do Produto', validators=[DataRequired()])
     nome = StringField('Nome do Produto', validators=[DataRequired()])
@@ -41,7 +47,6 @@ class ExportarPlanilhaForm(FlaskForm):
     senha_admin = PasswordField('Senha de Administrador', validators=[DataRequired()])
     submit = SubmitField('Exportar Planilha')
 
-# --- NOVO FORMULÁRIO DE BUSCA DE PRODUTO ---
 class BuscarProdutoForm(FlaskForm):
     termo_busca = StringField('Buscar por Código ou Nome do Produto', validators=[DataRequired()])
     submit = SubmitField('Buscar Produto')

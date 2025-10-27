@@ -10,6 +10,7 @@
         <h1>Painel de Cadastro e Gestão</h1>
         <nav>
             <a href="{{ url_for('index') }}">Voltar para o Catálogo</a>
+            <a href="{{ url_for('logout') }}">Sair</a>
         </nav>
     </header>
 
@@ -63,7 +64,6 @@
             {% endif %}
         </section>
 
-
         <section class="form-section">
             <h2>Exportar Todos os Produtos</h2>
             <p>Faça o download de uma planilha (.xlsx) com todos os produtos. A senha de administrador é necessária.</p>
@@ -89,6 +89,9 @@
                     {{ upload_form.arquivo() }}
                 </div>
                 <div class="form-group">
+                    <input type="password" name="senha_admin" placeholder="Senha de Administrador" required>
+                </div>
+                <div class="form-group">
                     {{ upload_form.submit(class="submit-btn") }}
                 </div>
             </form>
@@ -108,7 +111,6 @@
                     </div>
                 </form>
             </section>
-
             <section class="form-section">
                 <h2>Cadastrar Nova Categoria</h2>
                 <form method="POST" action="">
