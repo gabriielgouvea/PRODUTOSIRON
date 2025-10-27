@@ -3,81 +3,156 @@
 <head>
     <meta charset="UTF-8">
     <title>{{ title }} - Catálogo</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
     <header>
-        <h1>Painel de Cadastro</h1>
+        <h1>Painel de Cadastro e Gestão</h1>
         <nav>
             <a href="{{ url_for('index') }}">Voltar para o Catálogo</a>
         </nav>
     </header>
 
-    <hr>
+    <main class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="flash {{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
 
-    {% with messages = get_flashed_messages() %}
-        {% if messages %}
-            <ul>
-            {% for message in messages %}
-                <li style="color: green;">{{ message }}</li>
-            {% endfor %}
-            </ul>
-        {% endif %}
-    {% endwith %}
-
-    <main>
-        <section>
-            <h2>Cadastrar Nova Marca</h2>
+        <section class="form-section">
+            <h2>Buscar e Editar Produto</h2>
             <form method="POST" action="">
-                {{ marca_form.hidden_tag() }}
-                <p>
-                    {{ marca_form.nome.label }}<br>
-                    {{ marca_form.nome(size=32) }}
-                </p>
-                <p><input type="submit" name="submit_marca" value="Cadastrar Marca"></p>
+                {{ buscar_form.hidden_tag() }}
+                <div class="form-group">
+                    {{ buscar_form.termo_busca.label }}<br>
+                    {{ buscar_form.termo_busca(size=64, placeholder="Digite o código ou parte do nome...") }}
+                </div>
+                <div class="form-group">
+                    <input type="submit" name="submit_buscar" value="Buscar Produto" class="submit-btn">
+                </div>
+            </form>
+
+            {% if produtos_encontrados is not none %}
+                <hr style="margin: 20px 0;">
+                <h4>Resultados da Busca:</h4>
+                {% if produtos_encontrados %}
+                    <table class="results-table">
+                        <thead>
+                            <tr>
+                                <th>Código</th>
+                                <th>Nome</th>
+                                <th>Ação</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for produto in produtos_encontrados %}
+                            <tr>
+                                <td>{{ produto.codigo }}</td>
+                                <td>{{ produto.nome }}</td>
+                                <td><a href="{{ url_for('editar_produto', produto_id=produto.id) }}" class="edit-link">Editar</a></td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                {% else %}
+                    <p>Nenhum produto encontrado com o termo buscado.</p>
+                {% endif %}
+            {% endif %}
+        </section>
+
+
+        <section class="form-section">
+            <h2>Exportar Todos os Produtos</h2>
+            <p>Faça o download de uma planilha (.xlsx) com todos os produtos. A senha de administrador é necessária.</p>
+            <form method="POST" action="{{ url_for('exportar_planilha') }}">
+                {{ export_form.hidden_tag() }}
+                <div class="form-group">
+                    {{ export_form.senha_admin.label }}<br>
+                    {{ export_form.senha_admin(size=32) }}
+                </div>
+                <div class="form-group">
+                    {{ export_form.submit(class="submit-btn") }}
+                </div>
             </form>
         </section>
 
-        <hr>
-
-        <section>
-            <h2>Cadastrar Nova Categoria</h2>
-            <form method="POST" action="">
-                {{ categoria_form.hidden_tag() }}
-                <p>
-                    {{ categoria_form.nome.label }}<br>
-                    {{ categoria_form.nome(size=32) }}
-                </p>
-                <p><input type="submit" name="submit_categoria" value="Cadastrar Categoria"></p>
+        <section class="form-section">
+            <h2>Cadastro em Massa via Planilha</h2>
+            <p>A planilha deve ter as colunas: <strong>Codigo, Descricao, Marca, Categoria</strong>. A coluna <strong>URL_Imagem</strong> é opcional.</p>
+            <form method="POST" action="{{ url_for('upload_planilha') }}" enctype="multipart/form-data">
+                {{ upload_form.hidden_tag() }}
+                <div class="form-group">
+                    {{ upload_form.arquivo.label }}<br>
+                    {{ upload_form.arquivo() }}
+                </div>
+                <div class="form-group">
+                    {{ upload_form.submit(class="submit-btn") }}
+                </div>
             </form>
         </section>
+
+        <div class="form-grid">
+            <section class="form-section">
+                <h2>Cadastrar Nova Marca</h2>
+                <form method="POST" action="">
+                    {{ marca_form.hidden_tag() }}
+                    <div class="form-group">
+                        {{ marca_form.nome.label }}<br>
+                        {{ marca_form.nome(size=32) }}
+                    </div>
+                    <div class="form-group">
+                        <input type="submit" name="submit_marca" value="Cadastrar Marca" class="submit-btn">
+                    </div>
+                </form>
+            </section>
+
+            <section class="form-section">
+                <h2>Cadastrar Nova Categoria</h2>
+                <form method="POST" action="">
+                    {{ categoria_form.hidden_tag() }}
+                    <div class="form-group">
+                        {{ categoria_form.nome.label }}<br>
+                        {{ categoria_form.nome(size=32) }}
+                    </div>
+                    <div class="form-group">
+                        <input type="submit" name="submit_categoria" value="Cadastrar Categoria" class="submit-btn">
+                    </div>
+                </form>
+            </section>
+        </div>
         
-        <hr>
-
-        <section>
+        <section class="form-section">
             <h2>Cadastrar Novo Produto</h2>
             <form method="POST" action="">
                 {{ produto_form.hidden_tag() }}
-                <p>
-                    {{ produto_form.codigo.label }}<br>
-                    {{ produto_form.codigo(size=32) }}
-                </p>
-                <p>
-                    {{ produto_form.nome.label }}<br>
-                    {{ produto_form.nome(size=64) }}
-                </p>
-                <p>
-                    {{ produto_form.imagem_url.label }} (Opcional)<br>
-                    {{ produto_form.imagem_url(size=64) }}
-                </p>
-                <p>
-                    {{ produto_form.marca.label }}<br>
-                    {{ produto_form.marca() }}
-                </p>
-                <p>
-                    {{ produto_form.categoria.label }}<br>
-                    {{ produto_form.categoria() }}
-                </p>
-                <p><input type="submit" name="submit_produto" value="Cadastrar Produto"></p>
+                <div class="form-grid">
+                    <div class="form-group">
+                        {{ produto_form.codigo.label }}<br>
+                        {{ produto_form.codigo(size=32) }}
+                    </div>
+                    <div class="form-group">
+                        {{ produto_form.nome.label }}<br>
+                        {{ produto_form.nome(size=64) }}
+                    </div>
+                    <div class="form-group">
+                        {{ produto_form.imagem_url.label }} (Opcional)<br>
+                        {{ produto_form.imagem_url(size=64) }}
+                    </div>
+                    <div class="form-group">
+                        {{ produto_form.marca.label }}<br>
+                        {{ produto_form.marca() }}
+                    </div>
+                    <div class="form-group">
+                        {{ produto_form.categoria.label }}<br>
+                        {{ produto_form.categoria() }}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <input type="submit" name="submit_produto" value="Cadastrar Produto" class="submit-btn">
+                </div>
             </form>
         </section>
     </main>

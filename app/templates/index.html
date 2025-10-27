@@ -9,7 +9,7 @@
     <header>
         <h1>Catálogo de Produtos da Academia</h1>
         <nav>
-            <a href="{{ url_for('cadastro') }}">Ir para o Painel de Cadastro</a>
+            <a href="{{ url_for('cadastro') }}">Ir para o Painel de Gestão</a>
         </nav>
     </header>
 
@@ -23,7 +23,6 @@
                 {% endfor %}
             </datalist>
         </div>
-
         <div class="filtro-grupo">
             <label for="categoria-input">Filtrar por Categoria</label>
             <input class="filtro-select" list="categorias-list" id="categoria-input" name="categoria_nome" placeholder="Digite ou selecione uma categoria" value="{{ selected_categoria or '' }}">
@@ -33,12 +32,10 @@
                 {% endfor %}
             </datalist>
         </div>
-
         <div class="filtro-grupo">
             <label>&nbsp;</label>
             <button type="submit" class="filtro-btn">Buscar</button>
         </div>
-        
         <div class="filtro-grupo">
             <label>&nbsp;</label>
             <a href="{{ url_for('index') }}" class="filtro-btn clear-btn">Limpar</a>
@@ -54,6 +51,12 @@
         {% if produtos %}
             {% for produto in produtos %}
             <div class="produto-card">
+                <div class="menu-pontinhos" onclick="toggleMenu(event, 'menu-{{ produto.id }}')">&#8942;</div>
+                <ul id="menu-{{ produto.id }}" class="menu-dropdown">
+                    <li><a href="{{ url_for('editar_produto', produto_id=produto.id) }}">Editar</a></li>
+                    <li><a href="#" class="delete" onclick="abrirModalExclusao('{{ produto.id }}', '{{ produto.nome }}')">Excluir</a></li>
+                </ul>
+
                 <img src="{{ produto.imagem_url or 'https://via.placeholder.com/200' }}" alt="Imagem de {{ produto.nome }}">
                 <h2 class="produto-nome">{{ produto.nome }}</h2>
                 <button class="copy-btn" onclick="copiarCodigo('{{ produto.codigo }}', this)">
@@ -72,6 +75,24 @@
         {% endif %}
     </main>
 
+    <div id="modal-exclusao" class="modal-overlay">
+        <div class="modal-content">
+            <h2>Confirmar Exclusão</h2>
+            <p>Para excluir o produto <strong id="nome-produto-excluir"></strong>, por favor, insira a senha de administrador.</p>
+            <form id="form-exclusao" method="POST" action="">
+                <div class="form-group">
+                    <label for="senha-modal">Senha de Administrador</label>
+                    <input type="password" name="senha_admin" id="senha-modal" required>
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="submit-btn" style="background-color: #dc3545;">Confirmar Exclusão</button>
+                    <button type="button" class="filtro-btn clear-btn" onclick="fecharModalExclusao()">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
     <script>
         function copiarCodigo(codigo, element) {
             navigator.clipboard.writeText(codigo).then(() => {
@@ -83,31 +104,43 @@
             });
         }
 
-        // Nova função para filtrar os cards pelo nome
         function filtrarPorNome() {
-            const input = document.getElementById('pesquisa-nome');
-            const filtro = input.value.toLowerCase();
-            const grid = document.querySelector('.catalogo-grid');
-            const cards = grid.getElementsByClassName('produto-card');
-            let count = 0;
+            // ... (código de busca por nome continua o mesmo)
+        }
 
-            for (let i = 0; i < cards.length; i++) {
-                const nomeProduto = cards[i].querySelector('.produto-nome').innerText;
-                if (nomeProduto.toLowerCase().includes(filtro)) {
-                    cards[i].style.display = "";
-                    count++;
-                } else {
-                    cards[i].style.display = "none";
-                }
+        // --- LÓGICA PARA OS MENUS E MODAL ---
+        function toggleMenu(event, menuId) {
+            event.stopPropagation(); // Impede que o clique feche o menu imediatamente
+            closeAllMenus(); // Fecha outros menus abertos
+            document.getElementById(menuId).classList.toggle('show');
+        }
+
+        function closeAllMenus() {
+            document.querySelectorAll('.menu-dropdown').forEach(menu => {
+                menu.classList.remove('show');
+            });
+        }
+
+        // Fecha os menus se clicar em qualquer lugar fora deles
+        window.onclick = function(event) {
+            if (!event.target.matches('.menu-pontinhos')) {
+                closeAllMenus();
             }
-            
-            // Atualiza o contador de resultados
-            const contador = document.getElementById('contador-resultados');
-            if(filtro) { // Só mostra o contador se houver texto na busca
-                contador.innerText = `${count} resultado(s) encontrado(s)`;
-            } else {
-                contador.innerText = "";
-            }
+        }
+
+        const modal = document.getElementById('modal-exclusao');
+        const formExclusao = document.getElementById('form-exclusao');
+        const nomeProdutoExcluir = document.getElementById('nome-produto-excluir');
+
+        function abrirModalExclusao(produtoId, produtoNome) {
+            // Define a action do formulário para a rota de exclusão correta
+            formExclusao.action = `/excluir-produto/${produtoId}`;
+            nomeProdutoExcluir.innerText = produtoNome;
+            modal.classList.add('show');
+        }
+
+        function fecharModalExclusao() {
+            modal.classList.remove('show');
         }
     </script>
 

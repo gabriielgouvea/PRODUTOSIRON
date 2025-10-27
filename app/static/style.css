@@ -101,7 +101,6 @@ nav a:hover {
     min-width: 200px;
 }
 
-
 /* ESTILO DA GRADE DE PRODUTOS */
 .catalogo-grid {
     display: grid;
@@ -119,6 +118,7 @@ nav a:hover {
     flex-direction: column;
     justify-content: space-between;
     transition: transform 0.2s, box-shadow 0.2s;
+    position: relative; /* Necessário para o menu de 3 pontinhos */
 }
 
 .produto-card:hover {
@@ -132,7 +132,7 @@ nav a:hover {
     object-fit: contain;
     border-radius: 4px;
     margin-bottom: 15px;
-    background-color: #fff; /* Fundo branco para imagens com transparência */
+    background-color: #fff;
 }
 
 .produto-card .produto-nome {
@@ -153,7 +153,6 @@ nav a:hover {
     transition: background-color 0.2s;
     width: 100%;
 }
-
 .copy-btn:hover {
     background-color: #218838;
 }
@@ -164,4 +163,179 @@ nav a:hover {
     color: #888;
     font-size: 1.2em;
     padding: 40px;
+}
+
+/* --- ESTILOS PARA A PÁGINA DE CADASTRO --- */
+.container {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.form-section {
+    background-color: #1e1e1e;
+    padding: 20px;
+    border: 1px solid #333;
+    border-radius: 8px;
+    margin-bottom: 30px;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    color: #aaa;
+}
+
+.form-group input[type="text"],
+.form-group input[type="password"],
+.form-group select {
+    width: 95%;
+    padding: 10px;
+    background-color: #2d2d2d;
+    border: 1px solid #444;
+    border-radius: 5px;
+    color: #e0e0e0;
+}
+
+.submit-btn {
+    background-color: #007bff;
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+}
+.submit-btn:hover {
+    background-color: #0056b3;
+}
+
+/* Estilos para mensagens flash */
+.flash {
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 5px;
+    color: #fff;
+    text-align: center;
+}
+.flash.success {
+    background-color: #28a745;
+}
+.flash.error {
+    background-color: #dc3545;
+}
+.error-msg {
+    color: #ff6b6b;
+    font-size: 0.9em;
+}
+
+/* --- ESTILOS PARA O MENU DE 3 PONTINHOS E MODAL --- */
+.menu-pontinhos {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 24px;
+    cursor: pointer;
+    padding: 0 10px;
+    border-radius: 5px;
+}
+.menu-pontinhos:hover {
+    background-color: #333;
+}
+.menu-dropdown {
+    display: none;
+    position: absolute;
+    top: 40px;
+    right: 10px;
+    background-color: #2d2d2d;
+    border: 1px solid #444;
+    border-radius: 5px;
+    z-index: 100;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    width: 120px;
+}
+.menu-dropdown.show {
+    display: block;
+}
+.menu-dropdown li a {
+    color: #e0e0e0;
+    text-decoration: none;
+    display: block;
+    padding: 10px 15px;
+}
+.menu-dropdown li a:hover {
+    background-color: #007bff;
+    color: #fff;
+}
+.menu-dropdown li a.delete {
+    color: #ff6b6b;
+}
+.menu-dropdown li a.delete:hover {
+    background-color: #dc3545;
+    color: #fff;
+}
+
+/* Modal de Senha */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.7);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+}
+.modal-content {
+    background-color: #1e1e1e;
+    padding: 30px;
+    border-radius: 8px;
+    border: 1px solid #444;
+    width: 90%;
+    max-width: 400px;
+    text-align: center;
+}
+.modal-content h2 {
+    margin-top: 0;
+}
+.modal-overlay.show {
+    display: flex;
+}
+
+/* (Adicione isso no final do seu arquivo style.css) */
+
+/* --- ESTILOS PARA TABELA DE RESULTADOS DA BUSCA --- */
+.results-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+.results-table th, .results-table td {
+    border: 1px solid #444;
+    padding: 10px;
+    text-align: left;
+}
+.results-table th {
+    background-color: #2d2d2d;
+}
+.edit-link {
+    color: #ffc107;
+    font-weight: bold;
+    text-decoration: none;
+}
+.edit-link:hover {
+    text-decoration: underline;
 }

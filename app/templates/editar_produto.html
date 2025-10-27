@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ title }} - Catálogo</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header>
+        <h1>Editar Produto</h1>
+        <nav>
+            <a href="{{ url_for('index') }}">Voltar para o Catálogo</a>
+        </nav>
+    </header>
+
+    <main class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="flash {{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <section class="form-section">
+            <h2>Editando: {{ produto.nome }}</h2>
+            <form method="POST" action="{{ url_for('editar_produto', produto_id=produto.id) }}">
+                {{ form.hidden_tag() }}
+                <div class="form-grid">
+                    <div class="form-group">
+                        {{ form.codigo.label }}<br>
+                        {{ form.codigo(size=32) }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.nome.label }}<br>
+                        {{ form.nome(size=64) }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.imagem_url.label }} (Opcional)<br>
+                        {{ form.imagem_url(size=64) }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.marca.label }}<br>
+                        {{ form.marca() }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.categoria.label }}<br>
+                        {{ form.categoria() }}
+                    </div>
+                    <div class="form-group">
+                        <label for="senha_admin">Senha de Administrador</label><br>
+                        <input type="password" name="senha_admin" id="senha_admin" size="32" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    {{ form.submit(class="submit-btn") }}
+                </div>
+            </form>
+        </section>
+    </main>
+</body>
+</html>
